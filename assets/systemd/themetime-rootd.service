@@ -1,0 +1,12 @@
+[Unit]
+Description=ThemeTime privileged theme scheduler
+Documentation=https://github.com/themetime/themetime
+
+[Service]
+Type=simple
+ExecStart=/usr/local/libexec/themetime-rootd
+Restart=on-failure
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

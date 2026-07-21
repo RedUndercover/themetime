@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=ThemeTime
+Comment=Schedule KDE themes and wallpapers by time of day
+Exec=themetime gui
+Icon=io.github.themetime.ThemeTime
+StartupWMClass=io.github.themetime.ThemeTime
+Terminal=false
+Categories=Settings;DesktopSettings;Utility;
+Keywords=KDE;Plasma;Theme;Wallpaper;Sunset;Sunrise;Twilight;

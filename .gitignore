@@ -1,0 +1,9 @@
+bin/
+dist/
+node_modules/
+*.log
+*.tmp
+*.root-owned-backup
+.DS_Store
+coverage.out
+coverage.html

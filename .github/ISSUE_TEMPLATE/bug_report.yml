@@ -1,0 +1,43 @@
+name: Bug report
+description: Report a reproducible ThemeTime problem
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: Thanks for helping improve ThemeTime. Please remove private paths or commands from pasted configuration.
+  - type: input
+    id: version
+    attributes:
+      label: ThemeTime version
+      description: Output of `themetime version`.
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Distribution, Plasma version, and Wayland or X11.
+    validations:
+      required: true
+  - type: textarea
+    id: problem
+    attributes:
+      label: What happened?
+      description: Include the expected result and exact steps to reproduce it.
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Doctor output
+      description: Paste `themetime doctor`; redact paths if needed.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: Paste a small relevant excerpt from `journalctl --user -u themetime`.
+      render: text
