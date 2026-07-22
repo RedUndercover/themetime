@@ -3,6 +3,9 @@ package privileged
 import (
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
+	"reflect"
 	"testing"
 	"time"
 
@@ -89,6 +92,47 @@ func TestFilterConfigKeepsOnlyPrivilegedActions(t *testing.T) {
 	}
 	if len(filtered.Phases[0].Actions) != 1 || filtered.Phases[0].Actions[0].Type != model.ActionSDDMTheme {
 		t.Fatalf("actions = %#v", filtered.Phases[0].Actions)
+	}
+}
+
+func TestScheduleAndStateJSONRoundTrips(t *testing.T) {
+	now := time.Date(2026, 7, 22, 12, 0, 0, 0, time.UTC)
+	cfg := model.DefaultConfig()
+	cfg.Phases[0].Actions = []model.Action{{Type: model.ActionSDDMTheme, Value: "breeze"}}
+	cfg.Phases = cfg.Phases[:1]
+	schedule := Schedule{Version: 1, UserUID: "1000", Config: cfg, Written: now}
+	schedulePath := filepath.Join(t.TempDir(), "nested", "schedule.json")
+	if err := InstallSchedule(schedulePath, schedule); err != nil {
+		t.Fatal(err)
+	}
+	loadedSchedule, err := LoadSchedule(schedulePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(loadedSchedule, schedule) {
+		t.Fatalf("loaded schedule = %#v, want %#v", loadedSchedule, schedule)
+	}
+
+	state := State{LastPhaseID: "morning", LastFingerprint: "fingerprint", LastAppliedAt: now}
+	statePath := filepath.Join(t.TempDir(), "state.json")
+	if err := SaveState(statePath, state); err != nil {
+		t.Fatal(err)
+	}
+	loadedState, err := LoadState(statePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !reflect.DeepEqual(loadedState, state) {
+		t.Fatalf("loaded state = %#v, want %#v", loadedState, state)
+	}
+	for _, path := range []string{schedulePath, statePath} {
+		info, err := os.Stat(path)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if info.Mode().Perm() != 0o600 {
+			t.Fatalf("%s mode = %o, want 600", path, info.Mode().Perm())
+		}
 	}
 }
 

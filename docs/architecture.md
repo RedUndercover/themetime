@@ -80,10 +80,12 @@ the same implementation.
 location previews, diagnostics, and user-service installation. A mutex protects
 shared config, path, inventory, and Wails context state.
 
-The frontend in `cmd/themetime-wails/frontend/src` renders the Solar Observatory
-and calls those bound methods. Preview is non-persistent; save is validated and
-atomic. The window has a single-instance lock, hides on close, and uses a native
-system tray loop. A second launch raises the existing window.
+The frontend in `cmd/themetime-wails/frontend/src` separates Wails access,
+domain mutations, markup rendering, icons, and delegated event handling. It
+receives trigger ordering and labels from the Go view model. Preview is
+non-persistent; save is validated and atomic. The window has a single-instance
+lock, hides on close, and uses a native system tray loop. A second launch raises
+the existing window.
 
 The tray queries the same scheduler for current/next labels and applies the
 current phase through the same daemon helper as the UI.
@@ -111,8 +113,9 @@ repeated on the next poll.
 | Root state | Root daemon | Root daemon |
 | Root snapshots | Root applier | Administrator recovery |
 
-The GUI process and user daemon can run concurrently. Atomic config replacement
-prevents the daemon from observing a partially written GUI save.
+The GUI process and user daemon can run concurrently. Shared atomic JSON
+persistence prevents either daemon from observing partially written
+configuration or state.
 
 ## Failure behavior
 

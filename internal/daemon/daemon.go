@@ -2,7 +2,6 @@ package daemon
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"log"
@@ -10,6 +9,7 @@ import (
 	"time"
 
 	"github.com/RedUndercover/themetime/internal/config"
+	"github.com/RedUndercover/themetime/internal/jsonfile"
 	"github.com/RedUndercover/themetime/internal/kde"
 	"github.com/RedUndercover/themetime/internal/model"
 	"github.com/RedUndercover/themetime/internal/scheduler"
@@ -50,6 +50,8 @@ func Run(ctx context.Context, opts Options) error {
 	}
 	applier := kde.NewApplier(opts.SnapshotDir)
 	startup := true
+	ticker := time.NewTicker(opts.PollEvery)
+	defer ticker.Stop()
 
 	for {
 		err := tick(ctx, opts, applier, startup)
@@ -63,7 +65,7 @@ func Run(ctx context.Context, opts Options) error {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case <-time.After(opts.PollEvery):
+		case <-ticker.C:
 		}
 	}
 }
@@ -147,36 +149,15 @@ func pendingEffectiveActions(plan scheduler.Plan, state State, reapply bool) (mo
 }
 
 func loadState(path string) (State, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return State{}, err
-	}
 	var state State
-	if err := json.Unmarshal(data, &state); err != nil {
+	if err := jsonfile.Read(path, &state); err != nil {
 		return State{}, err
 	}
 	return state, nil
 }
 
 func saveState(path string, state State) error {
-	if err := os.MkdirAll(filepathDir(path), 0o755); err != nil {
-		return err
-	}
-	data, err := json.MarshalIndent(state, "", "  ")
-	if err != nil {
-		return err
-	}
-	data = append(data, '\n')
-	return os.WriteFile(path, data, 0o600)
-}
-
-func filepathDir(path string) string {
-	for i := len(path) - 1; i >= 0; i-- {
-		if path[i] == '/' {
-			return path[:i]
-		}
-	}
-	return "."
+	return jsonfile.WriteAtomic(path, state)
 }
 
 func ApplyPhaseByID(ctx context.Context, cfg model.Config, snapshotDir string, phaseID string) ([]kde.Result, error) {

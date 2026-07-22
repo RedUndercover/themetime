@@ -4,12 +4,13 @@
 
 ```text
 cmd/themetime/                 CLI and user daemon entry point
-cmd/themetime-wails/           Wails backend, window, and tray
-cmd/themetime-wails/frontend/  Vite frontend source and embedded build
+cmd/themetime-wails/           Wails API, view models, window, and tray
+cmd/themetime-wails/frontend/  Modular Vite frontend and embedded build
 cmd/themetime-rootctl/         Privileged schedule installer entry point
 cmd/themetime-rootd/           Privileged scheduler entry point
 internal/model/                Schema, enums, validation, defaults
 internal/config/               Paths, loading, atomic saves, snapshots
+internal/jsonfile/             Private atomic JSON persistence
 internal/solar/                Solar event calculations
 internal/scheduler/            Transition and current/next resolution
 internal/kde/                  Discovery and desktop action application
@@ -34,7 +35,7 @@ make build
 It first runs:
 
 ```sh
-npm --prefix cmd/themetime-wails/frontend ci
+npm --prefix cmd/themetime-wails/frontend ci --include=dev
 npm --prefix cmd/themetime-wails/frontend run build
 ```
 
@@ -61,6 +62,7 @@ go run ./cmd/themetime daemon --once
 For frontend-only layout iteration:
 
 ```sh
+npm --prefix cmd/themetime-wails/frontend test
 npm --prefix cmd/themetime-wails/frontend run dev
 ```
 
@@ -76,8 +78,9 @@ Run the full project test target:
 make test
 ```
 
-This validates the documentation, builds the frontend, and runs all Go packages.
-To check documentation only or iterate on Go tests:
+This validates the documentation, runs the frontend unit tests and production
+build, and tests all Go packages. To check documentation only or iterate on Go
+tests:
 
 ```sh
 make docs-check
@@ -92,10 +95,11 @@ Format Go sources with:
 make fmt
 ```
 
-There is currently no separate frontend test or lint script. Treat
-`npm run build` as the frontend syntax and bundling check, and manually exercise
-save, location preview, phase editing, sheet focus behavior, and tray lifecycle
-for interface changes.
+Frontend tests use Node's built-in test runner. Keep schedule/config mutations
+and formatting in `src/domain.js` so they remain testable without a browser;
+`src/views.js` owns markup and `src/main.js` owns Wails orchestration and the
+delegated event handlers. Continue to manually exercise save, location preview,
+phase editing, sheet focus behavior, and tray lifecycle for interface changes.
 
 ## Testing design
 
@@ -114,12 +118,12 @@ new field that could widen the root surface.
 
 ## Add a trigger
 
-1. Add the identifier to `TriggerKind` and `SolarTriggerKinds` in
-   `internal/model`.
-2. Extend trigger validation and labels.
+1. Add the identifier and labels to `TriggerKind` and `TriggerDefinitions` in
+   `internal/model`; the frontend picker reads this metadata from `UIState`.
+2. Extend trigger validation.
 3. Resolve the event or clock in `internal/scheduler` and define unavailable
    behavior.
-4. Add it to the frontend label and marker/picker data.
+4. Add any trigger-specific frontend icon or marker presentation.
 5. Add model, scheduler, GUI, and timezone-boundary tests.
 6. Update [Configuration](configuration.md), the
    [how-to guide](how-to.md), and example schedules.
@@ -165,10 +169,11 @@ RunDoctor
 InstallUserService
 ```
 
-`UIState` is the view model shared across the initial render and refreshes. When
-changing its JSON shape, update frontend reads in the same commit. Keep previews
-side-effect free and validate again in the Go save method rather than relying on
-browser controls.
+`UIState` is the view model shared across the initial render and refreshes. Its
+`triggerOptions` field is the frontend source of truth for trigger ordering and
+labels. When changing its JSON shape, update frontend reads in the same commit.
+Keep previews side-effect free and validate again in the Go save method rather
+than relying on browser controls.
 
 ## Documentation maintenance
 

@@ -2,9 +2,6 @@ package privileged
 
 import (
 	"context"
-	"crypto/sha256"
-	"encoding/hex"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
@@ -15,6 +12,7 @@ import (
 	"time"
 
 	"github.com/RedUndercover/themetime/internal/config"
+	"github.com/RedUndercover/themetime/internal/jsonfile"
 	"github.com/RedUndercover/themetime/internal/kde"
 	"github.com/RedUndercover/themetime/internal/model"
 	"github.com/RedUndercover/themetime/internal/scheduler"
@@ -94,28 +92,12 @@ func InstallSchedule(path string, schedule Schedule) error {
 	if err := ValidateSchedule(schedule); err != nil {
 		return err
 	}
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-		return err
-	}
-	data, err := json.MarshalIndent(schedule, "", "  ")
-	if err != nil {
-		return err
-	}
-	data = append(data, '\n')
-	tmp := fmt.Sprintf("%s.%d.tmp", path, time.Now().UnixNano())
-	if err := os.WriteFile(tmp, data, 0o600); err != nil {
-		return err
-	}
-	return os.Rename(tmp, path)
+	return jsonfile.WriteAtomic(path, schedule)
 }
 
 func LoadSchedule(path string) (Schedule, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return Schedule{}, err
-	}
 	var schedule Schedule
-	if err := json.Unmarshal(data, &schedule); err != nil {
+	if err := jsonfile.Read(path, &schedule); err != nil {
 		return Schedule{}, err
 	}
 	return schedule, ValidateSchedule(schedule)
@@ -168,7 +150,7 @@ func ApplyDueStateful(ctx context.Context, r kde.Runner, schedule Schedule, stat
 	failed := false
 	for i, action := range plan.Active.Phase.Actions {
 		key := appliedActionKey(plan.Active.Phase, i, action)
-		actionFingerprint := fingerprintAction(action)
+		actionFingerprint := scheduler.ActionFingerprint(action)
 		applied := state.AppliedActions[key]
 		if applied.PhaseFingerprint == fingerprint && applied.ActionFingerprint == actionFingerprint {
 			continue
@@ -208,31 +190,15 @@ func ApplyDueStateful(ctx context.Context, r kde.Runner, schedule Schedule, stat
 }
 
 func LoadState(path string) (State, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return State{}, err
-	}
 	var state State
-	if err := json.Unmarshal(data, &state); err != nil {
+	if err := jsonfile.Read(path, &state); err != nil {
 		return State{}, err
 	}
 	return state, nil
 }
 
 func SaveState(path string, state State) error {
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-		return err
-	}
-	data, err := json.MarshalIndent(state, "", "  ")
-	if err != nil {
-		return err
-	}
-	data = append(data, '\n')
-	tmp := fmt.Sprintf("%s.%d.tmp", path, time.Now().UnixNano())
-	if err := os.WriteFile(tmp, data, 0o600); err != nil {
-		return err
-	}
-	return os.Rename(tmp, path)
+	return jsonfile.WriteAtomic(path, state)
 }
 
 func ApplyAction(ctx context.Context, r kde.Runner, action model.Action) error {
@@ -308,10 +274,4 @@ func lineExists(out, value string) bool {
 
 func appliedActionKey(phase model.Phase, index int, action model.Action) string {
 	return phase.ID + "\n" + strconv.Itoa(index) + "\n" + string(action.Type)
-}
-
-func fingerprintAction(action model.Action) string {
-	data, _ := json.Marshal(action)
-	sum := sha256.Sum256(data)
-	return hex.EncodeToString(sum[:])
 }

@@ -10,10 +10,15 @@ WAILS_BASE_TAGS=production,desktop
 WAILS_WEBKIT_TAG=$(shell pkg-config --exists webkit2gtk-4.1 2>/dev/null && printf ',webkit2_41')
 WAILS_TAGS=$(WAILS_BASE_TAGS)$(WAILS_WEBKIT_TAG)
 
-.PHONY: build build-wails-frontend clean docs-check test fmt doctor goreleaser-check package release release-check install-user-assets install-root-assets
+.PHONY: build frontend-install frontend-test build-wails-frontend clean docs-check test fmt doctor goreleaser-check package release release-check install-user-assets install-root-assets
 
-build-wails-frontend:
-	npm --prefix cmd/themetime-wails/frontend ci
+frontend-install:
+	npm --prefix cmd/themetime-wails/frontend ci --include=dev
+
+frontend-test: frontend-install
+	npm --prefix cmd/themetime-wails/frontend test
+
+build-wails-frontend: frontend-install
 	npm --prefix cmd/themetime-wails/frontend run build
 
 build: build-wails-frontend
@@ -28,7 +33,7 @@ clean:
 docs-check:
 	node scripts/check-docs.mjs
 
-test: docs-check build-wails-frontend
+test: docs-check frontend-test build-wails-frontend
 	go test ./...
 
 fmt:

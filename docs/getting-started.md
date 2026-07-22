@@ -41,8 +41,8 @@ Ayatana App Indicator, and KDE Plasma libraries on the destination system.
 
 Install:
 
-- Go 1.25 or newer;
-- Node.js and npm;
+- Go 1.26 or newer;
+- Node.js 24 LTS and npm 11;
 - `make`, a C compiler, and `pkg-config`;
 - GTK 3 and WebKitGTK development files;
 - KDE Plasma 6 command-line tools.
@@ -54,9 +54,10 @@ make build
 ./bin/themetime doctor
 ```
 
-`make build` runs `npm ci`, builds the frontend, and compiles four executables
-under `bin/`: the CLI/daemon, desktop interface, restricted Polkit helper, and
-privileged daemon. WebKitGTK 4.1 is selected when `pkg-config` finds it;
+`make build` installs the locked frontend development dependencies, builds the
+frontend, and compiles four executables under `bin/`: the CLI/daemon, desktop
+interface, restricted Polkit helper, and privileged daemon. WebKitGTK 4.1 is
+selected when `pkg-config` finds it;
 otherwise the Wails default WebKitGTK 4.0 integration is used.
 
 Start the interface:

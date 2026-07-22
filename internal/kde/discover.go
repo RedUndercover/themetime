@@ -58,8 +58,8 @@ func Discover(ctx context.Context, r Runner) Inventory {
 	inv.IconThemes = discoverIconThemes()
 	inv.WindowDecorations = discoverKPackage(ctx, r, "KWin/Decoration")
 	inv.WallpaperPlugins = discoverWallpapers(ctx, r)
-	inv.StaticWallpapers = discoverMediaFiles(staticWallpaperRoots(), []string{".avif", ".bmp", ".jpeg", ".jpg", ".png", ".svg", ".webp"}, 250)
-	inv.VideoWallpapers = discoverMediaFiles(videoWallpaperRoots(), []string{".avi", ".m4v", ".mkv", ".mov", ".mp4", ".webm"}, 250)
+	inv.StaticWallpapers = discoverMediaFiles(staticWallpaperRoots(), StaticWallpaperExtensions(), 250)
+	inv.VideoWallpapers = discoverMediaFiles(videoWallpaperRoots(), VideoWallpaperExtensions(), 250)
 	inv.SDDMThemes = discoverSDDMThemes()
 	inv.PlymouthThemes = parseLineChoices(runIgnoreError(ctx, r, "plymouth-set-default-theme", "--list"))
 	for _, choice := range inv.WallpaperPlugins {

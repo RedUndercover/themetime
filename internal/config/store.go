@@ -1,13 +1,13 @@
 package config
 
 import (
-	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
 	"time"
 
+	"github.com/RedUndercover/themetime/internal/jsonfile"
 	"github.com/RedUndercover/themetime/internal/model"
 )
 
@@ -75,13 +75,9 @@ func LoadOrCreateDefault() (model.Config, Paths, error) {
 }
 
 func Load(path string) (model.Config, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return model.Config{}, err
-	}
 	var cfg model.Config
-	if err := json.Unmarshal(data, &cfg); err != nil {
-		return model.Config{}, fmt.Errorf("parse %s: %w", path, err)
+	if err := jsonfile.Read(path, &cfg); err != nil {
+		return model.Config{}, err
 	}
 	if cfg.Version == 0 {
 		cfg.Version = model.CurrentConfigVersion
@@ -99,19 +95,7 @@ func Save(path string, cfg model.Config) error {
 	if err := cfg.Validate(); err != nil {
 		return err
 	}
-	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
-		return err
-	}
-	data, err := json.MarshalIndent(cfg, "", "  ")
-	if err != nil {
-		return err
-	}
-	data = append(data, '\n')
-	tmp := fmt.Sprintf("%s.%d.tmp", path, time.Now().UnixNano())
-	if err := os.WriteFile(tmp, data, 0o600); err != nil {
-		return err
-	}
-	return os.Rename(tmp, path)
+	return jsonfile.WriteAtomic(path, cfg)
 }
 
 func SnapshotFile(snapshotDir, path string) (string, error) {

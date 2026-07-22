@@ -4,8 +4,7 @@ project_name: themetime
 
 before:
   hooks:
-    - npm --prefix cmd/themetime-wails/frontend ci
-    - npm --prefix cmd/themetime-wails/frontend run build
+    - make build-wails-frontend
     - go test ./...
 
 builds:

@@ -5,6 +5,18 @@ All notable changes to ThemeTime are documented here. The project follows
 
 ## [Unreleased]
 
+## [0.1.3] - 2026-07-22
+
+### Changed
+
+- Updated the supported toolchain to Go 1.26 and Node.js 24 LTS, upgraded Vite,
+  systray, transitive Go modules, and GitHub Actions to their latest stable
+  releases, and made frontend dependency installation reproducible.
+- Modularized the Wails backend and frontend, centralized trigger and media
+  metadata, and added frontend unit coverage.
+- Unified private JSON persistence behind atomic writes for configuration and
+  daemon state.
+
 ## [0.1.2] - 2026-07-22
 
 ### Fixed
@@ -37,7 +49,8 @@ All notable changes to ThemeTime are documented here. The project follows
 - User service installer, diagnostics, configuration snapshots, and full docs.
 - Reproducible Linux release archives and GitHub release automation.
 
-[Unreleased]: https://github.com/RedUndercover/themetime/compare/v0.1.2...HEAD
+[Unreleased]: https://github.com/RedUndercover/themetime/compare/v0.1.3...HEAD
+[0.1.3]: https://github.com/RedUndercover/themetime/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/RedUndercover/themetime/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/RedUndercover/themetime/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/RedUndercover/themetime/releases/tag/v0.1.0

@@ -78,3 +78,25 @@ func TestNormalizeMediaPathsExpandsHome(t *testing.T) {
 		t.Fatal("normalization mutated its input config")
 	}
 }
+
+func TestUIStateExposesEachTriggerDefinitionOnce(t *testing.T) {
+	app := &App{cfg: model.DefaultConfig()}
+	state, err := app.state()
+	if err != nil {
+		t.Fatal(err)
+	}
+	definitions := model.TriggerDefinitions()
+	if len(state.TriggerOptions) != len(definitions) {
+		t.Fatalf("trigger options = %d, want %d", len(state.TriggerOptions), len(definitions))
+	}
+	seen := map[model.TriggerKind]bool{}
+	for i, option := range state.TriggerOptions {
+		if seen[option.Kind] {
+			t.Fatalf("duplicate trigger option %q", option.Kind)
+		}
+		seen[option.Kind] = true
+		if option != definitions[i] {
+			t.Fatalf("trigger option %d = %#v, want %#v", i, option, definitions[i])
+		}
+	}
+}

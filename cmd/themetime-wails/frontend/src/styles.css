@@ -1,3 +1,4 @@
+/* Base tokens, reset, shell, header, and shared controls */
 :root {
   color-scheme: dark;
   font-family: Inter, "Noto Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -362,6 +363,7 @@ h3 {
   font-weight: 700;
 }
 
+/* Solar timeline */
 .timeline-card {
   margin: 12px 20px 14px;
   overflow: hidden;
@@ -676,6 +678,7 @@ h3 {
   filter: drop-shadow(0 0 6px rgba(255, 224, 122, 0.6));
 }
 
+/* Schedule workspace, rule editor, and inspector */
 .workspace {
   display: grid;
   min-height: 0;
@@ -1430,6 +1433,7 @@ select:focus {
   font-weight: 700;
 }
 
+/* Sheets and settings */
 .sheet-backdrop {
   position: fixed;
   z-index: 30;
@@ -1739,6 +1743,7 @@ select:focus {
   line-height: 1.35;
 }
 
+/* Feedback and motion */
 .toast {
   position: fixed;
   right: 20px;
@@ -1791,6 +1796,7 @@ select:focus {
   from { translate: 0 12px; opacity: 0; }
 }
 
+/* Responsive layout */
 @media (max-width: 1179px) {
   .app-header {
     grid-template-columns: minmax(185px, 1fr) auto minmax(350px, 1fr);

@@ -35,6 +35,8 @@ func runWithArgs(args []string, tickFn func(context.Context) error) error {
 	}
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
 	defer stop()
+	ticker := time.NewTicker(*poll)
+	defer ticker.Stop()
 	for {
 		err := tickFn(ctx)
 		if *once {
@@ -46,7 +48,7 @@ func runWithArgs(args []string, tickFn func(context.Context) error) error {
 		select {
 		case <-ctx.Done():
 			return ctx.Err()
-		case <-time.After(*poll):
+		case <-ticker.C:
 		}
 	}
 }

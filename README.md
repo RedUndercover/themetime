@@ -44,7 +44,7 @@ installation, and removal.
 
 ## Build from source
 
-The full application requires Go 1.25+, Node.js/npm, a C compiler,
+The full application requires Go 1.26+, Node.js 24 LTS/npm 11, a C compiler,
 `pkg-config`, GTK 3, WebKitGTK, and KDE Plasma command-line tools.
 
 ```sh

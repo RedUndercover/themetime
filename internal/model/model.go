@@ -61,6 +61,25 @@ type Trigger struct {
 	OffsetMinutes int         `json:"offsetMinutes,omitempty"`
 }
 
+type TriggerDefinition struct {
+	Kind       TriggerKind `json:"kind"`
+	Label      string      `json:"label"`
+	ShortLabel string      `json:"shortLabel"`
+}
+
+var triggerDefinitions = []TriggerDefinition{
+	{Kind: TriggerClock, Label: "Clock", ShortLabel: "Clock"},
+	{Kind: TriggerAstronomicalDawn, Label: "Astronomical dawn", ShortLabel: "Astro dawn"},
+	{Kind: TriggerNauticalDawn, Label: "Nautical dawn", ShortLabel: "Nautical dawn"},
+	{Kind: TriggerCivilDawn, Label: "Civil dawn", ShortLabel: "Civil dawn"},
+	{Kind: TriggerSunrise, Label: "Sunrise", ShortLabel: "Sunrise"},
+	{Kind: TriggerSolarNoon, Label: "Solar noon", ShortLabel: "Noon"},
+	{Kind: TriggerSunset, Label: "Sunset", ShortLabel: "Sunset"},
+	{Kind: TriggerCivilDusk, Label: "Civil dusk", ShortLabel: "Civil dusk"},
+	{Kind: TriggerNauticalDusk, Label: "Nautical dusk", ShortLabel: "Nautical dusk"},
+	{Kind: TriggerAstronomicalDusk, Label: "Astronomical dusk", ShortLabel: "Astro dusk"},
+}
+
 type ActionType string
 
 const (
@@ -189,17 +208,17 @@ func (t Trigger) Validate() error {
 }
 
 func SolarTriggerKinds() []TriggerKind {
-	return []TriggerKind{
-		TriggerAstronomicalDawn,
-		TriggerNauticalDawn,
-		TriggerCivilDawn,
-		TriggerSunrise,
-		TriggerSolarNoon,
-		TriggerSunset,
-		TriggerCivilDusk,
-		TriggerNauticalDusk,
-		TriggerAstronomicalDusk,
+	kinds := make([]TriggerKind, 0, len(triggerDefinitions)-1)
+	for _, definition := range triggerDefinitions {
+		if definition.Kind != TriggerClock {
+			kinds = append(kinds, definition.Kind)
+		}
 	}
+	return kinds
+}
+
+func TriggerDefinitions() []TriggerDefinition {
+	return slices.Clone(triggerDefinitions)
 }
 
 func IsSolarTrigger(kind TriggerKind) bool {
@@ -207,53 +226,21 @@ func IsSolarTrigger(kind TriggerKind) bool {
 }
 
 func SolarTriggerLabel(kind TriggerKind) string {
-	switch kind {
-	case TriggerAstronomicalDawn:
-		return "Astronomical dawn"
-	case TriggerNauticalDawn:
-		return "Nautical dawn"
-	case TriggerCivilDawn:
-		return "Civil dawn"
-	case TriggerSunrise:
-		return "Sunrise"
-	case TriggerSolarNoon:
-		return "Solar noon"
-	case TriggerSunset:
-		return "Sunset"
-	case TriggerCivilDusk:
-		return "Civil dusk"
-	case TriggerNauticalDusk:
-		return "Nautical dusk"
-	case TriggerAstronomicalDusk:
-		return "Astronomical dusk"
-	default:
-		return string(kind)
+	for _, definition := range triggerDefinitions {
+		if definition.Kind == kind {
+			return definition.Label
+		}
 	}
+	return string(kind)
 }
 
 func SolarTriggerShortLabel(kind TriggerKind) string {
-	switch kind {
-	case TriggerAstronomicalDawn:
-		return "Astro dawn"
-	case TriggerNauticalDawn:
-		return "Nautical dawn"
-	case TriggerCivilDawn:
-		return "Civil dawn"
-	case TriggerSunrise:
-		return "Sunrise"
-	case TriggerSolarNoon:
-		return "Noon"
-	case TriggerSunset:
-		return "Sunset"
-	case TriggerCivilDusk:
-		return "Civil dusk"
-	case TriggerNauticalDusk:
-		return "Nautical dusk"
-	case TriggerAstronomicalDusk:
-		return "Astro dusk"
-	default:
-		return string(kind)
+	for _, definition := range triggerDefinitions {
+		if definition.Kind == kind {
+			return definition.ShortLabel
+		}
 	}
+	return string(kind)
 }
 
 func (a Action) Validate() error {
