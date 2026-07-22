@@ -5,6 +5,15 @@ All notable changes to ThemeTime are documented here. The project follows
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-07-22
+
+### Fixed
+
+- Prevented Smart Video Wallpaper Reborn from displaying a black desktop when
+  its remembered video is no longer in ThemeTime's single-video playlist.
+- Recreated stuck video wallpaper players during startup and manual apply so
+  Plasma reliably loads and plays the selected video.
+
 ## [0.1.1] - 2026-07-22
 
 ### Added
@@ -28,6 +37,7 @@ All notable changes to ThemeTime are documented here. The project follows
 - User service installer, diagnostics, configuration snapshots, and full docs.
 - Reproducible Linux release archives and GitHub release automation.
 
-[Unreleased]: https://github.com/RedUndercover/themetime/compare/v0.1.1...HEAD
+[Unreleased]: https://github.com/RedUndercover/themetime/compare/v0.1.2...HEAD
+[0.1.2]: https://github.com/RedUndercover/themetime/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/RedUndercover/themetime/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/RedUndercover/themetime/releases/tag/v0.1.0

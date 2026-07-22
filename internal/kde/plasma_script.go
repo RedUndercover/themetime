@@ -28,8 +28,25 @@ func applyWallpaperScript(ctx context.Context, r Runner, plugin string, screen s
 	if !ok {
 		return fmt.Errorf("qdbus6 is required to configure per-screen wallpapers")
 	}
+	if plugin == SmartVideoWallpaperPlugin {
+		// A separate evaluateScript call is intentional. Plasma coalesces two
+		// wallpaperPlugin assignments made in one script and keeps the existing
+		// QML MediaPlayer alive; returning from the reset call lets Plasma destroy
+		// the stale player before the video plugin is configured again.
+		if _, err := r.Run(ctx, qdbus, "org.kde.plasmashell", "/PlasmaShell", "org.kde.PlasmaShell.evaluateScript", wallpaperResetScript(screen)); err != nil {
+			return err
+		}
+	}
 	_, err = r.Run(ctx, qdbus, "org.kde.plasmashell", "/PlasmaShell", "org.kde.PlasmaShell.evaluateScript", script)
 	return err
+}
+
+func wallpaperResetScript(screen string) string {
+	return "var targetScreen = " + jsString(screen) + ";\n" +
+		"desktops().forEach(function(desktop) {\n" +
+		"  if (targetScreen !== \"\" && String(desktop.screen) !== targetScreen) { return; }\n" +
+		"  desktop.wallpaperPlugin = \"org.kde.image\";\n" +
+		"});\n"
 }
 
 func wallpaperScript(plugin string, screen string, values map[string]string) (string, error) {
@@ -81,10 +98,13 @@ func videoWallpaperValues(videoPath string, extra map[string]string) (map[string
 		return nil, err
 	}
 	values := map[string]string{
-		"VideoUrls":                   string(data),
-		"ChangeWallpaperMode":         "0",
-		"RandomMode":                  "false",
-		"ResumeLastVideo":             "true",
+		"VideoUrls":           string(data),
+		"ChangeWallpaperMode": "0",
+		"RandomMode":          "false",
+		// ThemeTime supplies a single-video playlist. Resuming the plugin's
+		// previously remembered video can select a path that is no longer in
+		// that playlist, leaving the wallpaper with an empty (black) source.
+		"ResumeLastVideo":             "false",
 		"MuteMode":                    valueOrDefault(extra["muteMode"], "5"),
 		"FillMode":                    valueOrDefault(extra["fillMode"], "2"),
 		"PauseMode":                   valueOrDefault(extra["pauseMode"], "3"),
