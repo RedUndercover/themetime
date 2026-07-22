@@ -6,7 +6,6 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const markdownFiles = [
   'README.md',
   ...markdownFilesIn('docs'),
-  ...markdownFilesIn('wiki'),
 ].sort();
 
 const failures = [];
@@ -64,10 +63,6 @@ function checkLinks(relativeFile, markdown) {
     let resolved = targetPart
       ? path.normalize(path.join(path.dirname(relativeFile), targetPart))
       : relativeFile;
-
-    if (!path.extname(resolved) && path.dirname(relativeFile) === 'wiki') {
-      resolved += '.md';
-    }
 
     const absoluteTarget = path.join(root, resolved);
     if (!fs.existsSync(absoluteTarget)) {

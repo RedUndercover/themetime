@@ -68,7 +68,7 @@ on the resolved schedule. Avoid identical times if the intended winner matters.
 
 At polar latitudes, some solar events do not occur on a given date. Sunrise and
 sunset use `runtime.solarFallback`; other solar events use built-in civil-time
-fallbacks. See [Solar events and offsets](../wiki/Solar-Events-and-Offsets.md).
+fallbacks. See [Choose triggers and offsets](how-to.md#choose-triggers-and-offsets).
 
 ## Add actions
 

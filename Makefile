@@ -1,14 +1,16 @@
 APP=themetime
 VERSION?=$(shell tr -d '\n' < VERSION)
 COMMIT?=$(shell git rev-parse --short HEAD 2>/dev/null || printf unknown)
+GORELEASER_VERSION?=v2.17.0
+GORELEASER?=go run github.com/goreleaser/goreleaser/v2@$(GORELEASER_VERSION)
 GO_BUILD_FLAGS=-trimpath -buildvcs=false
-VERSION_LDFLAGS=-s -w -X github.com/themetime/themetime/internal/buildinfo.Version=$(VERSION) -X github.com/themetime/themetime/internal/buildinfo.Commit=$(COMMIT)
+VERSION_LDFLAGS=-s -w -X github.com/RedUndercover/themetime/internal/buildinfo.Version=$(VERSION) -X github.com/RedUndercover/themetime/internal/buildinfo.Commit=$(COMMIT)
 STRIP_LDFLAGS=-s -w
 WAILS_BASE_TAGS=production,desktop
 WAILS_WEBKIT_TAG=$(shell pkg-config --exists webkit2gtk-4.1 2>/dev/null && printf ',webkit2_41')
 WAILS_TAGS=$(WAILS_BASE_TAGS)$(WAILS_WEBKIT_TAG)
 
-.PHONY: build build-wails-frontend clean docs-check test fmt doctor package release-check install-user-assets install-root-assets
+.PHONY: build build-wails-frontend clean docs-check test fmt doctor goreleaser-check package release release-check install-user-assets install-root-assets
 
 build-wails-frontend:
 	npm --prefix cmd/themetime-wails/frontend ci
@@ -35,11 +37,17 @@ fmt:
 doctor:
 	go run ./cmd/themetime doctor
 
-package: build
-	./scripts/package-release.sh "$(VERSION)"
+goreleaser-check:
+	$(GORELEASER) check
 
-release-check: test package
-	(cd dist && sha256sum --check ./*.sha256)
+package:
+	$(GORELEASER) release --snapshot --clean --skip=sbom
+
+release:
+	$(GORELEASER) release --clean
+
+release-check: test goreleaser-check package
+	(cd dist && sha256sum --check checksums.txt)
 
 install-user-assets: build
 	install -Dm755 bin/themetime "$(HOME)/.local/bin/themetime"

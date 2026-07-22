@@ -8,8 +8,8 @@ import (
 	"os"
 	"time"
 
-	"github.com/themetime/themetime/internal/config"
-	"github.com/themetime/themetime/internal/privileged"
+	"github.com/RedUndercover/themetime/internal/config"
+	"github.com/RedUndercover/themetime/internal/privileged"
 )
 
 func main() {

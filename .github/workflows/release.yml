@@ -7,6 +7,8 @@ on:
 
 permissions:
   contents: write
+  id-token: write
+  attestations: write
 
 concurrency:
   group: release-${{ github.ref }}
@@ -46,14 +48,20 @@ jobs:
           cache: npm
           cache-dependency-path: cmd/themetime-wails/frontend/package-lock.json
 
-      - name: Test and package
+      - name: Install Syft
+        uses: anchore/sbom-action/download-syft@v0
+
+      - name: Test
+        run: make test
+
+      - name: Build packages and publish release
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: v2.17.0
+          args: release --clean
         env:
-          RELEASE_VERSION: ${{ github.ref_name }}
-        run: |
-          export SOURCE_DATE_EPOCH="$(git log -1 --format=%ct)"
-          make test
-          make package VERSION="${RELEASE_VERSION#v}" COMMIT="${GITHUB_SHA::7}"
-          (cd dist && sha256sum --check ./*.sha256)
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
@@ -61,18 +69,12 @@ jobs:
           name: themetime-linux-x86_64
           path: |
             dist/*.tar.gz
-            dist/*.sha256
+            dist/*.pkg.tar.zst
+            dist/checksums.txt
+            dist/*.sbom.json
           if-no-files-found: error
 
-      - name: Publish GitHub release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          if gh release view "$GITHUB_REF_NAME" >/dev/null 2>&1; then
-            gh release upload "$GITHUB_REF_NAME" dist/*.tar.gz dist/*.sha256 --clobber
-          else
-            gh release create "$GITHUB_REF_NAME" dist/*.tar.gz dist/*.sha256 \
-              --verify-tag \
-              --generate-notes \
-              --title "ThemeTime $GITHUB_REF_NAME"
-          fi
+      - name: Attest release artifacts
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: dist/*

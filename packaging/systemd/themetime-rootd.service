@@ -4,7 +4,7 @@ Documentation=https://github.com/RedUndercover/themetime
 
 [Service]
 Type=simple
-ExecStart=/usr/local/libexec/themetime-rootd
+ExecStart=/usr/bin/themetime-rootd
 Restart=on-failure
 RestartSec=10s
 

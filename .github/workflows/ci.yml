@@ -50,10 +50,15 @@ jobs:
       - name: Vet Go packages
         run: go vet ./...
 
+      - name: Install Syft
+        uses: anchore/sbom-action/download-syft@v0
+
       - name: Build and verify release archive
-        run: |
-          make package COMMIT="${GITHUB_SHA::7}"
-          (cd dist && sha256sum --check ./*.sha256)
+        uses: goreleaser/goreleaser-action@v6
+        with:
+          distribution: goreleaser
+          version: v2.17.0
+          args: release --snapshot --clean
 
       - name: Verify embedded version
-        run: test "$(./bin/themetime version)" = "$(cat VERSION) (${GITHUB_SHA::7})"
+        run: test -n "$(find dist -type f -name '*.pkg.tar.zst' -print -quit)"

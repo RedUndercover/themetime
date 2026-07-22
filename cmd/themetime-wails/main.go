@@ -20,13 +20,13 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/linux"
 	wailsruntime "github.com/wailsapp/wails/v2/pkg/runtime"
 
-	"github.com/themetime/themetime/internal/config"
-	"github.com/themetime/themetime/internal/daemon"
-	"github.com/themetime/themetime/internal/doctor"
-	"github.com/themetime/themetime/internal/kde"
-	"github.com/themetime/themetime/internal/model"
-	"github.com/themetime/themetime/internal/scheduler"
-	"github.com/themetime/themetime/internal/systemd"
+	"github.com/RedUndercover/themetime/internal/config"
+	"github.com/RedUndercover/themetime/internal/daemon"
+	"github.com/RedUndercover/themetime/internal/doctor"
+	"github.com/RedUndercover/themetime/internal/kde"
+	"github.com/RedUndercover/themetime/internal/model"
+	"github.com/RedUndercover/themetime/internal/scheduler"
+	"github.com/RedUndercover/themetime/internal/systemd"
 )
 
 //go:embed all:frontend/dist

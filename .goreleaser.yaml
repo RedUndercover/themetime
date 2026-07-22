@@ -1,0 +1,129 @@
+version: 2
+
+project_name: themetime
+
+before:
+  hooks:
+    - npm --prefix cmd/themetime-wails/frontend ci
+    - npm --prefix cmd/themetime-wails/frontend run build
+    - go test ./...
+
+builds:
+  - id: themetime
+    main: ./cmd/themetime
+    binary: themetime
+    goos: [linux]
+    goarch: [amd64]
+    env: [CGO_ENABLED=0]
+    flags: [-trimpath, -buildvcs=false]
+    ldflags:
+      - -s -w -X github.com/RedUndercover/themetime/internal/buildinfo.Version={{.Version}} -X github.com/RedUndercover/themetime/internal/buildinfo.Commit={{.Commit}}
+
+  - id: themetime-wails
+    main: ./cmd/themetime-wails
+    binary: themetime-wails
+    goos: [linux]
+    goarch: [amd64]
+    env: [CGO_ENABLED=1]
+    flags: [-trimpath, -buildvcs=false]
+    tags: [production, desktop, webkit2_41]
+    ldflags: [-s -w]
+
+  - id: themetime-rootctl
+    main: ./cmd/themetime-rootctl
+    binary: themetime-rootctl
+    goos: [linux]
+    goarch: [amd64]
+    env: [CGO_ENABLED=0]
+    flags: [-trimpath, -buildvcs=false]
+    ldflags: [-s -w]
+
+  - id: themetime-rootd
+    main: ./cmd/themetime-rootd
+    binary: themetime-rootd
+    goos: [linux]
+    goarch: [amd64]
+    env: [CGO_ENABLED=0]
+    flags: [-trimpath, -buildvcs=false]
+    ldflags: [-s -w]
+
+archives:
+  - id: themetime
+    ids: [themetime, themetime-wails, themetime-rootctl, themetime-rootd]
+    formats: [tar.gz]
+    name_template: "{{ .ProjectName }}-{{ .Version }}-{{ .Os }}-{{ if eq .Arch \"amd64\" }}x86_64{{ else }}{{ .Arch }}{{ end }}"
+    files:
+      - README.md
+      - LICENSE
+      - CHANGELOG.md
+      - CONTRIBUTING.md
+      - SECURITY.md
+      - docs/*
+      - assets/desktop/*
+      - assets/icons/*
+      - assets/systemd/*
+      - assets/polkit/*
+
+nfpms:
+  - id: themetime-archlinux
+    ids: [themetime, themetime-wails, themetime-rootctl, themetime-rootd]
+    package_name: themetime
+    vendor: RedUndercover
+    homepage: https://github.com/RedUndercover/themetime
+    maintainer: RedUndercover
+    description: Solar-aware KDE Plasma 6 theme and wallpaper scheduler
+    license: MIT
+    formats: [archlinux]
+    bindir: /usr/bin
+    dependencies:
+      - gtk3
+      - kconfig
+      - libayatana-appindicator
+      - plasma-workspace
+      - polkit
+      - qt6-tools
+      - webkit2gtk-4.1
+    contents:
+      - src: packaging/systemd/themetime.service
+        dst: /usr/lib/systemd/user/themetime.service
+      - src: packaging/systemd/themetime-rootd.service
+        dst: /usr/lib/systemd/system/themetime-rootd.service
+      - src: packaging/polkit/io.github.themetime.rootctl.policy
+        dst: /usr/share/polkit-1/actions/io.github.themetime.rootctl.policy
+      - src: assets/desktop/io.github.themetime.ThemeTime.desktop
+        dst: /usr/share/applications/io.github.themetime.ThemeTime.desktop
+      - src: assets/icons/io.github.themetime.ThemeTime.svg
+        dst: /usr/share/icons/hicolor/scalable/apps/io.github.themetime.ThemeTime.svg
+      - src: LICENSE
+        dst: /usr/share/licenses/themetime/LICENSE
+      - src: README.md
+        dst: /usr/share/doc/themetime/README.md
+      - src: CHANGELOG.md
+        dst: /usr/share/doc/themetime/CHANGELOG.md
+      - src: docs
+        dst: /usr/share/doc/themetime/docs
+        type: tree
+    archlinux:
+      scripts:
+        postupgrade: packaging/scripts/postinstall.sh
+    scripts:
+      postinstall: packaging/scripts/postinstall.sh
+      preremove: packaging/scripts/preremove.sh
+
+checksum:
+  name_template: checksums.txt
+
+sboms:
+  - artifacts: archive
+  - id: package-sbom
+    artifacts: package
+
+changelog:
+  sort: asc
+  filters:
+    exclude: ['^docs:', '^test:', '^ci:']
+
+release:
+  github:
+    owner: RedUndercover
+    name: themetime

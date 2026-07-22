@@ -9,10 +9,10 @@ import (
 	"os"
 	"time"
 
-	"github.com/themetime/themetime/internal/config"
-	"github.com/themetime/themetime/internal/kde"
-	"github.com/themetime/themetime/internal/model"
-	"github.com/themetime/themetime/internal/scheduler"
+	"github.com/RedUndercover/themetime/internal/config"
+	"github.com/RedUndercover/themetime/internal/kde"
+	"github.com/RedUndercover/themetime/internal/model"
+	"github.com/RedUndercover/themetime/internal/scheduler"
 )
 
 type Options struct {

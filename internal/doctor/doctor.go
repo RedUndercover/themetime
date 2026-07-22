@@ -8,8 +8,8 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/themetime/themetime/internal/config"
-	"github.com/themetime/themetime/internal/kde"
+	"github.com/RedUndercover/themetime/internal/config"
+	"github.com/RedUndercover/themetime/internal/kde"
 )
 
 type Check struct {

@@ -10,7 +10,8 @@ Thank you for helping improve ThemeTime. Start with the
 2. Keep scheduler calculations deterministic and preserve the privileged
    action whitelist.
 3. Add or update tests for behavioral changes.
-4. Update the canonical documentation and relevant wiki workflow.
+4. Update the canonical reference and any affected workflow in
+   `docs/how-to.md`.
 5. Run:
 
    ```sh

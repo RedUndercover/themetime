@@ -1,4 +1,4 @@
-module github.com/themetime/themetime
+module github.com/RedUndercover/themetime
 
 go 1.25.0
 

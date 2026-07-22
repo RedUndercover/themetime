@@ -10,8 +10,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/themetime/themetime/internal/model"
-	"github.com/themetime/themetime/internal/solar"
+	"github.com/RedUndercover/themetime/internal/model"
+	"github.com/RedUndercover/themetime/internal/solar"
 )
 
 type Transition struct {

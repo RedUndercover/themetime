@@ -5,6 +5,18 @@ All notable changes to ThemeTime are documented here. The project follows
 
 ## [Unreleased]
 
+## [0.1.1] - 2026-07-22
+
+### Added
+
+- GoReleaser v2 release automation with native Arch Linux packages, checksums,
+  SBOMs, and GitHub artifact attestations.
+
+### Changed
+
+- Consolidated the README, reference documentation, and task guides into one
+  canonical documentation tree.
+
 ## [0.1.0] - 2026-07-20
 
 ### Added
@@ -16,5 +28,6 @@ All notable changes to ThemeTime are documented here. The project follows
 - User service installer, diagnostics, configuration snapshots, and full docs.
 - Reproducible Linux release archives and GitHub release automation.
 
-[Unreleased]: https://github.com/themetime/themetime/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/themetime/themetime/releases/tag/v0.1.0
+[Unreleased]: https://github.com/RedUndercover/themetime/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/RedUndercover/themetime/compare/v0.1.0...v0.1.1
+[0.1.0]: https://github.com/RedUndercover/themetime/releases/tag/v0.1.0

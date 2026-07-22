@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/themetime/themetime/internal/model"
+	"github.com/RedUndercover/themetime/internal/model"
 )
 
 func TestResolveNowOvernight(t *testing.T) {

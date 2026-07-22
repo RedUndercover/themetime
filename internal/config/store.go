@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/themetime/themetime/internal/model"
+	"github.com/RedUndercover/themetime/internal/model"
 )
 
 const appDir = "themetime"

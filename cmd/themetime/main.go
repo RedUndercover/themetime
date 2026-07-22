@@ -14,12 +14,12 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/themetime/themetime/internal/buildinfo"
-	"github.com/themetime/themetime/internal/config"
-	"github.com/themetime/themetime/internal/daemon"
-	"github.com/themetime/themetime/internal/doctor"
-	"github.com/themetime/themetime/internal/privileged"
-	"github.com/themetime/themetime/internal/systemd"
+	"github.com/RedUndercover/themetime/internal/buildinfo"
+	"github.com/RedUndercover/themetime/internal/config"
+	"github.com/RedUndercover/themetime/internal/daemon"
+	"github.com/RedUndercover/themetime/internal/doctor"
+	"github.com/RedUndercover/themetime/internal/privileged"
+	"github.com/RedUndercover/themetime/internal/systemd"
 )
 
 const rootctlPolicyPath = "/usr/local/libexec/themetime-rootctl"

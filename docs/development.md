@@ -18,9 +18,8 @@ internal/privileged/           Filtered root schedule and actions
 internal/doctor/               Environment diagnostics
 internal/systemd/              User unit installation
 assets/                        Desktop, systemd, and Polkit files
-design/mockups/                Design explorations
 docs/                          Maintainer/reference documentation
-wiki/                          Task-oriented wiki pages
+docs/how-to.md                 Task-oriented workflows and recipes
 .github/                       CI, releases, and contribution templates
 ```
 
@@ -46,9 +45,11 @@ uses `production,desktop` build tags and adds `webkit2_41` when
 Because `frontend/dist` is embedded by Go, rebuild the frontend before compiling
 the Wails binary after JavaScript or CSS changes. `make build` always does this.
 
-Create the distributable archive and checksum with `make package`. See
-[Packaging and releases](packaging-and-releases.md) for versioning and tag
-instructions.
+Create a local snapshot of every distributable artifact with `make package`.
+This runs the pinned GoReleaser v2 release pipeline and writes an Arch package,
+portable archive, and checksum manifest under `dist/`. See
+[Packaging and releases](packaging-and-releases.md) for prerequisites,
+artifact names, versioning, and tag instructions.
 
 For CLI-only iteration:
 
@@ -120,8 +121,8 @@ new field that could widen the root surface.
    behavior.
 4. Add it to the frontend label and marker/picker data.
 5. Add model, scheduler, GUI, and timezone-boundary tests.
-6. Update [Configuration](configuration.md), the wiki solar page, and example
-   schedules.
+6. Update [Configuration](configuration.md), the
+   [how-to guide](how-to.md), and example schedules.
 
 Adding a trigger changes both persisted configuration and presentation, even
 when the schema version stays the same.
@@ -171,8 +172,8 @@ browser controls.
 
 ## Documentation maintenance
 
-Reference behavior belongs in `docs/`; common workflows belong in `wiki/`.
-When commands, schema fields, paths, action values, fallback behavior, or service
-security change, update both the relevant reference page and any wiki walkthrough
-that exposes the behavior. Run `make docs-check` before merging; it verifies local
+Reference behavior belongs in its dedicated page under `docs/`; common
+workflows and recipes belong in `docs/how-to.md`. When commands, schema fields,
+paths, action values, fallback behavior, or service security change, update
+both in the same change. Run `make docs-check` before merging; it verifies local
 links and anchors, balanced code fences, and every fenced JSON example.

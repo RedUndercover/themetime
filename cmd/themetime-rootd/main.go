@@ -10,9 +10,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/themetime/themetime/internal/config"
-	"github.com/themetime/themetime/internal/kde"
-	"github.com/themetime/themetime/internal/privileged"
+	"github.com/RedUndercover/themetime/internal/config"
+	"github.com/RedUndercover/themetime/internal/kde"
+	"github.com/RedUndercover/themetime/internal/privileged"
 )
 
 func main() {
