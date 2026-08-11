@@ -23,9 +23,10 @@ This creates `~/.config/systemd/user/themetime.service` with:
 
 - the absolute path to the selected `themetime` binary;
 - `themetime daemon` as `ExecStart`;
-- ordering after the graphical session and Plasma shell;
+- ordering after the graphical session and Plasma shell, and `PartOf=graphical-session.target`;
 - restart on failure after five seconds;
-- enablement under `default.target`.
+- enablement under `graphical-session.target`, so the daemon starts only once the
+  session environment (`WAYLAND_DISPLAY`, `DISPLAY`) exists.
 
 The installer runs `systemctl --user daemon-reload` and, unless
 `--now=false` is supplied, `systemctl --user enable --now

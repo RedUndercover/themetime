@@ -5,6 +5,22 @@ All notable changes to ThemeTime are documented here. The project follows
 
 ## [Unreleased]
 
+## [0.1.4] - 2026-08-11
+
+### Fixed
+
+- Installed user service now enables under `graphical-session.target` with
+  `PartOf=graphical-session.target`, so the daemon starts only after the
+  session environment (`WAYLAND_DISPLAY`, `DISPLAY`) exists. Previously the
+  unit started at `default.target` before the graphical session, and every
+  color scheme apply crashed `plasma-apply-colorscheme` with "could not
+  connect to display" core dumps.
+
+### Security
+
+- Updated the transitive frontend build dependencies `nanoid` and `postcss` to
+  versions without their reported npm audit advisories.
+
 ## [0.1.3] - 2026-07-22
 
 ### Changed
@@ -49,7 +65,8 @@ All notable changes to ThemeTime are documented here. The project follows
 - User service installer, diagnostics, configuration snapshots, and full docs.
 - Reproducible Linux release archives and GitHub release automation.
 
-[Unreleased]: https://github.com/RedUndercover/themetime/compare/v0.1.3...HEAD
+[Unreleased]: https://github.com/RedUndercover/themetime/compare/v0.1.4...HEAD
+[0.1.4]: https://github.com/RedUndercover/themetime/compare/v0.1.3...v0.1.4
 [0.1.3]: https://github.com/RedUndercover/themetime/compare/v0.1.2...v0.1.3
 [0.1.2]: https://github.com/RedUndercover/themetime/compare/v0.1.1...v0.1.2
 [0.1.1]: https://github.com/RedUndercover/themetime/compare/v0.1.0...v0.1.1

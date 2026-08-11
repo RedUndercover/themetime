@@ -29,6 +29,7 @@ func InstallUserService(binary string, enableNow bool) (string, error) {
 	content := fmt.Sprintf(`[Unit]
 Description=ThemeTime KDE schedule daemon
 After=graphical-session.target plasma-plasmashell.service
+PartOf=graphical-session.target
 
 [Service]
 Type=simple
@@ -37,7 +38,7 @@ Restart=on-failure
 RestartSec=5s
 
 [Install]
-WantedBy=default.target
+WantedBy=graphical-session.target
 `, systemdQuotePath(binary))
 	if err := os.WriteFile(unitPath, []byte(content), 0o644); err != nil {
 		return "", err
