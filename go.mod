@@ -6,7 +6,7 @@ toolchain go1.26.5
 
 require (
 	fyne.io/systray v1.12.2
-	github.com/wailsapp/wails/v2 v2.13.0
+	github.com/wailsapp/wails/v2 v2.14.0
 )
 
 require (
